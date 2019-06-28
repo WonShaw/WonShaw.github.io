@@ -94,13 +94,17 @@
 
 
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Outer Heaven of Shaw">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="记录一下使用VPS自建ShadowSocksR的过程。 登陆使用ssh连上自己的VPS。这一步有可能连不上，表现为ping得通，就是连不上去，偶尔可能可以连上，但绝大部分时候连不上，似乎只要是ssh到境外就会被阻断。这个时候就看VPS提供商的本事了，有的提供商会提供一个反向代理连VPS，只要国内能访问这个VPS提供商，就可以利用其提供的反向代理连VPS。 ssh连不上似乎并不影响SSR，因此只要我">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ubuntu上自建SSR">
+<meta property="og:url" content="http://yoursite.com/2019/06/29/depoly_ssr_on_ubuntu/index.html">
 <meta property="og:site_name" content="Outer Heaven of Shaw">
+<meta property="og:description" content="记录一下使用VPS自建ShadowSocksR的过程。 登陆使用ssh连上自己的VPS。这一步有可能连不上，表现为ping得通，就是连不上去，偶尔可能可以连上，但绝大部分时候连不上，似乎只要是ssh到境外就会被阻断。这个时候就看VPS提供商的本事了，有的提供商会提供一个反向代理连VPS，只要国内能访问这个VPS提供商，就可以利用其提供的反向代理连VPS。 ssh连不上似乎并不影响SSR，因此只要我">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-06-28T18:41:39.468Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Outer Heaven of Shaw">
+<meta name="twitter:title" content="Ubuntu上自建SSR">
+<meta name="twitter:description" content="记录一下使用VPS自建ShadowSocksR的过程。 登陆使用ssh连上自己的VPS。这一步有可能连不上，表现为ping得通，就是连不上去，偶尔可能可以连上，但绝大部分时候连不上，似乎只要是ssh到境外就会被阻断。这个时候就看VPS提供商的本事了，有的提供商会提供一个反向代理连VPS，只要国内能访问这个VPS提供商，就可以利用其提供的反向代理连VPS。 ssh连不上似乎并不影响SSR，因此只要我">
 
 
 
@@ -108,7 +112,7 @@
 
   
   
-  <link rel="canonical" href="http://yoursite.com/">
+  <link rel="canonical" href="http://yoursite.com/2019/06/29/depoly_ssr_on_ubuntu/">
 
 
 
@@ -118,7 +122,7 @@
   };
 </script>
 
-  <title>Outer Heaven of Shaw</title>
+  <title>Ubuntu上自建SSR | Outer Heaven of Shaw</title>
   
 
 
@@ -166,8 +170,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-  page-home">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -209,7 +212,7 @@
         
         
           
-          <li class="menu-item menu-item-home menu-item-active">
+          <li class="menu-item menu-item-home">
 
     
     
@@ -269,9 +272,9 @@
           
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -303,10 +306,8 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/2019/06/29/depoly_ssr_on_ubuntu/" class="post-title-link" itemprop="url">Ubuntu上自建SSR</a>
+          <h1 class="post-title" itemprop="name headline">Ubuntu上自建SSR
+
               
             
           </h1>
@@ -370,9 +371,7 @@
       
 
       
-        
-          
-            <p>记录一下使用VPS自建ShadowSocksR的过程。</p>
+        <p>记录一下使用VPS自建ShadowSocksR的过程。</p>
 <h2 id="登陆"><a href="#登陆" class="headerlink" title="登陆"></a>登陆</h2><p>使用ssh连上自己的VPS。这一步有可能连不上，表现为ping得通，就是连不上去，偶尔可能可以连上，但绝大部分时候连不上，似乎只要是ssh到境外就会被阻断。这个时候就看VPS提供商的本事了，有的提供商会提供一个反向代理连VPS，只要国内能访问这个VPS提供商，就可以利用其提供的反向代理连VPS。</p>
 <p>ssh连不上似乎并不影响SSR，因此只要我们能想办法在机器上执行指令，建立SSR服务端，就不妨碍我们的目标。</p>
 <h2 id="安装SSR"><a href="#安装SSR" class="headerlink" title="安装SSR"></a>安装SSR</h2><h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocksR.sh</span><br><span class="line">chmod +x shadowsocksR.sh</span><br><span class="line">./shadowsocksR.sh 2&gt;&amp;1 | tee shadowsocksR.log</span><br></pre></td></tr></table></figure>
@@ -404,8 +403,6 @@
 
 <h2 id="享受自由的互联网"><a href="#享受自由的互联网" class="headerlink" title="享受自由的互联网"></a>享受自由的互联网</h2><p>把SSR和fail2ban都运行起来，就可以享受自由的互联网了。</p>
 
-          
-        
       
     </div>
 
@@ -428,12 +425,12 @@
       
 
       
+      
+      
 
       
 
       
-      
-        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -443,14 +440,15 @@
   </article>
 
 
-    
-  </section>
-
-  
+  </div>
 
 
           </div>
           
+
+  
+
+
 
         </div>
         
@@ -470,8 +468,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <div class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -517,6 +524,23 @@
         </div>
       </div>
 
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#登陆"><span class="nav-number">1.</span> <span class="nav-text">登陆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装SSR"><span class="nav-number">2.</span> <span class="nav-text">安装SSR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装"><span class="nav-number">2.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#卸载"><span class="nav-number">2.2.</span> <span class="nav-text">卸载</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相关路径"><span class="nav-number">2.3.</span> <span class="nav-text">相关路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#管理指令"><span class="nav-number">2.4.</span> <span class="nav-text">管理指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置"><span class="nav-number">2.5.</span> <span class="nav-text">配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用fail2ban"><span class="nav-number">3.</span> <span class="nav-text">使用fail2ban</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#安装fail2ban："><span class="nav-number">3.1.</span> <span class="nav-text">安装fail2ban：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置fail2ban规则"><span class="nav-number">3.2.</span> <span class="nav-text">配置fail2ban规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fail2ban管理指令"><span class="nav-number">3.3.</span> <span class="nav-text">fail2ban管理指令</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#享受自由的互联网"><span class="nav-number">4.</span> <span class="nav-text">享受自由的互联网</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
       
 
       
@@ -645,6 +669,10 @@
 
 
   
+  <script src="/js/scrollspy.js?v=7.1.2"></script>
+<script src="/js/post-details.js?v=7.1.2"></script>
+
+
 
   
 
@@ -660,6 +688,8 @@
 
   
 
+
+  
 
 
   
