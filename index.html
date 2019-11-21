@@ -167,6 +167,89 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/upgrade-hexo-and-theme/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Shaw">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Outer Heaven of Shaw">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/11/upgrade-hexo-and-theme/" class="post-title-link" itemprop="url">更新hexo及主题</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2019-11-21 18:24:04 / Modified: 18:54:27" itemprop="dateCreated datePublished" datetime="2019-11-21T18:24:04+08:00">2019-11-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>记录一下升级hexo和主题的过程。</p>
+<p>任何软件都存在一定的安全缺陷，github会对使用hexo作为GitHub pages的仓库发出安全警告，同时发出Pull Request（PR）协助修复。</p>
+<p>其实直接对GitHub发出的PR进行合并并不是好办法，因为hexo本身是一个软件，自身更新里就包含了对安全缺陷的修复，GitHub的自动PR只是hexo官方修改的一个很小的子集，因此最好的办法是直接更新hexo。</p>
+<p>以我的仓库为例，首先进入blog根目录，使用以下指令查看哪些依赖需要更新</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm outdated</span><br></pre></td></tr></table></figure>
+
+<p>执行后会有相关的提示，告知Latest版本。</p>
+<p>打开<code>package.json</code>文件，将里面对应的需要更新的依赖的版本修改成上面给出的最新版本。</p>
+<p>保存后，执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br></pre></td></tr></table></figure>
+
+<p>更新完成后，可以通过以下指令检查是否成功</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
+
+<p>接下来执行以下指令，在本地看看效果</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br><span class="line">hexo s</span><br></pre></td></tr></table></figure>
+
+<p>由于更新的版本跨度略大，我所使用的next主题显示略有问题，因此需要更新主题。</p>
+<p>由于我的主题是直接以submodule的形式管理的（参考<a href="https://wonshaw.github.io/2019/06/use-hexo-on-osx/#主题管理" target="_blank" rel="noopener">主题管理</a>），因此让submodule更新到最新的提交即可。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git submodule update --remote</span><br></pre></td></tr></table></figure>
+
+<p>再次本地生成文档预览，没有问题，接下来执行以下指令发布即可。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+
+<p>由于发布的只是静态站点，最好把源文件也托管了，比如我的GitHub仓库里hexo分支就是源文件，只需要把本地修改（也就是更新package.json和主题的修改）提交并push上去即可（参考<a href="https://wonshaw.github.io/2019/06/use-hexo-on-osx/#源文件管理" target="_blank" rel="noopener">源文件管理</a>）</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="default">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/use-hexo-on-osx/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -415,7 +498,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>

@@ -46,14 +46,17 @@
   };
 </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Outer Heaven of Shaw">
-<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;archives&#x2F;2019&#x2F;index.html">
+  <meta name="description" content="记录一下升级hexo和主题的过程。 任何软件都存在一定的安全缺陷，github会对使用hexo作为GitHub pages的仓库发出安全警告，同时发出Pull Request（PR）协助修复。 其实直接对GitHub发出的PR进行合并并不是好办法，因为hexo本身是一个软件，自身更新里就包含了对安全缺陷的修复，GitHub的自动PR只是hexo官方修改的一个很小的子集，因此最好的办法是直接更新he">
+<meta property="og:type" content="article">
+<meta property="og:title" content="更新hexo及主题">
+<meta property="og:url" content="http:&#x2F;&#x2F;yoursite.com&#x2F;2019&#x2F;11&#x2F;upgrade-hexo-and-theme&#x2F;index.html">
 <meta property="og:site_name" content="Outer Heaven of Shaw">
+<meta property="og:description" content="记录一下升级hexo和主题的过程。 任何软件都存在一定的安全缺陷，github会对使用hexo作为GitHub pages的仓库发出安全警告，同时发出Pull Request（PR）协助修复。 其实直接对GitHub发出的PR进行合并并不是好办法，因为hexo本身是一个软件，自身更新里就包含了对安全缺陷的修复，GitHub的自动PR只是hexo官方修改的一个很小的子集，因此最好的办法是直接更新he">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-11-21T10:54:27.641Z">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/archives/2019/">
+<link rel="canonical" href="http://yoursite.com/2019/11/upgrade-hexo-and-theme/">
 
 
 <script id="page-configurations">
@@ -61,13 +64,13 @@
   CONFIG.page = {
     sidebar: "",
     isHome: false,
-    isPost: false,
+    isPost: true,
     isPage: false,
-    isArchive: true
+    isArchive: false
   };
 </script>
 
-  <title>Archive | Outer Heaven of Shaw</title>
+  <title>更新hexo及主题 | Outer Heaven of Shaw</title>
   
 
 
@@ -162,89 +165,105 @@
           <div class="content">
             
 
+  <div class="posts-expand">
+      
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">Um..! 3 posts in total. Keep on posting.</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="default">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/upgrade-hexo-and-theme/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Shaw">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Outer Heaven of Shaw">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          更新hexo及主题
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2019-11-21 18:24:04 / Modified: 18:54:27" itemprop="dateCreated datePublished" datetime="2019-11-21T18:24:04+08:00">2019-11-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <h1 class="collection-header">2019</h1>
-    </div>
+        <p>记录一下升级hexo和主题的过程。</p>
+<p>任何软件都存在一定的安全缺陷，github会对使用hexo作为GitHub pages的仓库发出安全警告，同时发出Pull Request（PR）协助修复。</p>
+<p>其实直接对GitHub发出的PR进行合并并不是好办法，因为hexo本身是一个软件，自身更新里就包含了对安全缺陷的修复，GitHub的自动PR只是hexo官方修改的一个很小的子集，因此最好的办法是直接更新hexo。</p>
+<p>以我的仓库为例，首先进入blog根目录，使用以下指令查看哪些依赖需要更新</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm outdated</span><br></pre></td></tr></table></figure>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+<p>执行后会有相关的提示，告知Latest版本。</p>
+<p>打开<code>package.json</code>文件，将里面对应的需要更新的依赖的版本修改成上面给出的最新版本。</p>
+<p>保存后，执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install</span><br></pre></td></tr></table></figure>
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2019-11-21T18:24:04+08:00"
-              content="2019-11-21">
-          11-21
-        </time>
-      </div>
+<p>更新完成后，可以通过以下指令检查是否成功</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo -v</span><br></pre></td></tr></table></figure>
 
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2019/11/upgrade-hexo-and-theme/" itemprop="url">
-            <span itemprop="name">更新hexo及主题</span>
-          </a>
-      </h2>
+<p>接下来执行以下指令，在本地看看效果</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo g</span><br><span class="line">hexo s</span><br></pre></td></tr></table></figure>
 
-    </header>
-  </article>
+<p>由于更新的版本跨度略大，我所使用的next主题显示略有问题，因此需要更新主题。</p>
+<p>由于我的主题是直接以submodule的形式管理的（参考<a href="https://wonshaw.github.io/2019/06/use-hexo-on-osx/#主题管理" target="_blank" rel="noopener">主题管理</a>），因此让submodule更新到最新的提交即可。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git submodule update --remote</span><br></pre></td></tr></table></figure>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+<p>再次本地生成文档预览，没有问题，接下来执行以下指令发布即可。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2019-06-29T02:46:28+08:00"
-              content="2019-06-29">
-          06-29
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2019/06/use-hexo-on-osx/" itemprop="url">
-            <span itemprop="name">使用hexo构建博客</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2019-06-29T00:53:02+08:00"
-              content="2019-06-29">
-          06-29
-        </time>
-      </div>
-
-      <h2 class="post-title">
-          <a class="post-title-link" href="/2019/06/deploy_ssr_on_ubuntu/" itemprop="url">
-            <span itemprop="name">Ubuntu上自建SSR</span>
-          </a>
-      </h2>
-
-    </header>
-  </article>
-
+<p>由于发布的只是静态站点，最好把源文件也托管了，比如我的GitHub仓库里hexo分支就是源文件，只需要把本地修改（也就是更新package.json和主题的修改）提交并push上去即可（参考<a href="https://wonshaw.github.io/2019/06/use-hexo-on-osx/#源文件管理" target="_blank" rel="noopener">源文件管理</a>）</p>
 
     </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+                <a href="/2019/06/use-hexo-on-osx/" rel="next" title="使用hexo构建博客">
+                  <i class="fa fa-chevron-left"></i> 使用hexo构建博客
+                </a>
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+            </div>
+          </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
   </div>
-  
-  
-  
-
-  
-
 
 
           </div>
