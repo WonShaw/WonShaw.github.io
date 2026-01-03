@@ -1,0 +1,26 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.github.wonshaw.apilab",
+      "sha256_cert_fingerprints":
+        ["83:01:25:73:C5:1B:6B:38:9D:E1:53:CC:89:B1:20:CE:99:A2:CC:F7:A3:08:3C:20:EF:CB:41:B3:3F:45:71:B0"]
+    }
+  },
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.github.wonshaw.apilab.debug",
+      "sha256_cert_fingerprints":
+        ["6D:55:4C:8A:CB:5D:D2:33:58:F0:F5:8E:A1:22:40:F4:25:25:DF:41:95:DE:D5:0A:15:02:83:D4:6D:BA:07:D7"]
+    }
+  }
+]
