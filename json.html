@@ -1,0 +1,863 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JSON Formatter</title>
+  <style>
+    :root{
+      --bg: #191716;
+      --panel: #26221f;
+      --panel2:#2d2723;
+      --text:#f4efe8;
+      --muted:#b5aca1;
+      --border:rgba(255,255,255,.08);
+      --ok:#6dc3b3;
+      --warn:#f2a56f;
+      --bad:#e38b7a;
+      --chip:#2f2925;
+      --shadow: 0 12px 34px rgba(0,0,0,.45);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans";
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      background: var(--bg);
+      color:var(--text);
+      font-family:var(--sans);
+    }
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      padding:18px 18px 12px;
+      position: sticky; top: 0; z-index: 10;
+      background: var(--bg);
+      border-bottom:1px solid var(--border);
+    }
+    header h1{ margin:0; font-size:16px; font-weight:700; letter-spacing:.2px; }
+    header .sub{ margin:0; color:var(--muted); font-size:12px; }
+    .title-block{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .notice{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-top:10px;
+      padding:6px 10px;
+      border-radius:999px;
+      background: var(--panel2);
+      border:1px solid rgba(109,195,179,.2);
+      color: var(--muted);
+      font-size:11px;
+      width: fit-content;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:50%;
+      background: var(--ok);
+      box-shadow: 0 0 0 4px rgba(109,195,179,.12);
+      flex:0 0 auto;
+    }
+
+    .wrap{
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 14px 18px 22px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:14px;
+      align-items: stretch;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: var(--panel);
+      border:1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      min-height: 420px;
+      display:flex;
+      flex-direction: column;
+    }
+    .card .head{
+      padding:12px 12px 10px;
+      border-bottom:1px solid var(--border);
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap:10px;
+    }
+    .title{
+      font-size:13px;
+      font-weight:700;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .pill{
+      font-family:var(--mono);
+      font-size:11px;
+      padding:2px 8px;
+      border-radius:999px;
+      background: var(--chip);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+      justify-content:flex-end;
+    }
+    button{
+      cursor:pointer;
+      border:1px solid var(--border);
+      background: var(--chip);
+      color: var(--text);
+      border-radius:10px;
+      padding:8px 10px;
+      font-size:12px;
+      transition: transform .05s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+      white-space: nowrap;
+    }
+    button:hover{ background: rgba(255,255,255,.06); }
+    button:active{ transform: translateY(1px); }
+    button.primary{
+      background: rgba(109,195,179,.14);
+      border-color: rgba(109,195,179,.35);
+    }
+    button.primary:hover{ background: rgba(109,195,179,.20); }
+    button.danger{
+      background: rgba(227,139,122,.12);
+      border-color: rgba(227,139,122,.35);
+    }
+    button.danger:hover{ background: rgba(227,139,122,.18); }
+
+    .body{
+      padding:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      flex:1;
+      min-height:0;
+    }
+
+    textarea{
+      width:100%;
+      flex:1;
+      min-height: 320px;
+      resize: none;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      background: var(--panel2);
+      color: var(--text);
+      padding: 12px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.55;
+      outline: none;
+    }
+    textarea:focus{
+      border-color: rgba(109,195,179,.45);
+      box-shadow: 0 0 0 3px rgba(109,195,179,.12);
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .row .hint{
+      color:var(--muted);
+      font-size:12px;
+      margin-left:auto;
+      display:flex; gap:10px; align-items:center;
+      white-space:nowrap;
+    }
+
+    .status{
+      font-family: var(--mono);
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--chip);
+      color: var(--muted);
+    }
+    .status.ok{ color: var(--ok); border-color: rgba(109,195,179,.35); background: rgba(109,195,179,.12); }
+    .status.bad{ color: var(--bad); border-color: rgba(227,139,122,.35); background: rgba(227,139,122,.12); }
+    .status.warn{ color: var(--warn); border-color: rgba(242,165,111,.35); background: rgba(242,165,111,.12); }
+
+    .search{
+      display:flex; gap:8px; align-items:center;
+      width: 100%;
+    }
+    .search input{
+      width: 100%;
+      border-radius: 10px;
+      border:1px solid var(--border);
+      background: var(--panel2);
+      color: var(--text);
+      padding: 9px 10px;
+      font-size: 12px;
+      outline:none;
+    }
+    .search input:focus{
+      border-color: rgba(109,195,179,.45);
+      box-shadow: 0 0 0 3px rgba(109,195,179,.12);
+    }
+
+    pre.viewer{
+      flex:1;
+      min-height: 320px;
+      margin:0;
+      padding:12px;
+      overflow:auto;
+      border-radius: 12px;
+      border:1px solid var(--border);
+      background: var(--panel2);
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.55;
+      outline:none;
+      position: relative;
+    }
+
+    /* JSON highlighting */
+    .k{ color:#8ad4c6; }
+    .s{ color:#f0d2b4; }
+    .n{ color:#f2a56f; }
+    .b{ color:#6dc3b3; }
+    .u{ color:#cbbfb2; }
+    .p{ color:#b5aca1; }
+    .err{ color:#e38b7a; }
+
+    /* Collapse/expand */
+    .node{ display:inline; }
+    .toggle{
+      cursor:pointer;
+      user-select:none;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding: 1px 6px;
+      margin: 0 2px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--panel2);
+      color: var(--muted);
+    }
+    .toggle:hover{ background: rgba(255,255,255,.06); }
+    .collapsed > .children{ display:none; }
+    .collapsed > .ellipsis{ display:inline; }
+    .ellipsis{
+      display:none;
+      color: var(--muted);
+      margin-left: 4px;
+      font-style: italic;
+    }
+
+    mark{
+      background: rgba(242,165,111,.22);
+      color: var(--text);
+      padding: 0 2px;
+      border-radius: 4px;
+    }
+
+    footer{
+      padding: 14px 18px 22px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align:center;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="title-block">
+    <h1>JSON Formatter & Viewer</h1>
+  </div>
+  <div class="notice"><span class="dot"></span>Offline-only: no server requests.</div>
+</header>
+
+<div class="wrap">
+  <div class="grid">
+    <!-- Input -->
+    <section class="card">
+      <div class="head">
+        <div class="title">Input <span class="pill">JSON</span></div>
+        <div class="controls">
+          <button class="primary" id="btnFormat" title="Pretty-print JSON">Format</button>
+          <button id="btnMinify" title="Minify JSON (no spaces)">Minify</button>
+          <button id="btnUnescape" title="If the input is an escaped JSON string (e.g. \"{\\\"a\\\":1}\"), this will unescape it into raw JSON">
+            Unescape Input
+          </button>
+          <button id="btnEscape" title="Escape the current JSON as a single JSON string (safe to paste into logs/messages)">
+            Escape as JSON String
+          </button>
+          <button id="btnFixCommon" title="Try to fix common issues: smart quotes, trailing commas, some single-quote patterns">
+            Try Fix
+          </button>
+          <button class="danger" id="btnClear">Clear</button>
+        </div>
+      </div>
+      <div class="body">
+        <textarea id="input" spellcheck="false" placeholder='Paste JSON here. Example: {"a":1,"b":[true,null,"x"]}'></textarea>
+        <div class="row">
+          <div class="status" id="status">Not validated</div>
+          <div class="hint">
+            <span id="stats"></span>
+            <span>Shortcut: Ctrl/⌘ + Enter to format</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Viewer -->
+    <section class="card">
+      <div class="head">
+        <div class="title">Viewer <span class="pill">Pretty</span></div>
+        <div class="controls">
+          <button id="btnExpandAll">Expand all</button>
+          <button id="btnCollapseAll">Collapse all</button>
+          <button id="btnCopy">Copy</button>
+        </div>
+      </div>
+      <div class="body">
+        <div class="search">
+          <input id="search" placeholder="Search (case-insensitive). Example: user.name or 123 or error" />
+          <button id="btnNext" title="Jump to next match">Next</button>
+        </div>
+        <pre id="viewer" class="viewer" tabindex="0"><span class="p">{</span><span class="u"> Paste JSON on the left and click “Format” </span><span class="p">}</span></pre>
+        <div class="row">
+          <div class="status" id="searchStatus">Search: 0</div>
+          <div class="hint">
+            <span>Tip: click ▸ / ▾ to collapse/expand arrays and objects</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<footer>
+  © wonshaw.github.io All rights reserved.
+</footer>
+
+<script>
+(function(){
+  const elInput = document.getElementById('input');
+  const elViewer = document.getElementById('viewer');
+  const elStatus = document.getElementById('status');
+  const elStats = document.getElementById('stats');
+  const elSearch = document.getElementById('search');
+  const elSearchStatus = document.getElementById('searchStatus');
+
+  const btnFormat = document.getElementById('btnFormat');
+  const btnMinify = document.getElementById('btnMinify');
+  const btnUnescape = document.getElementById('btnUnescape');
+  const btnEscape = document.getElementById('btnEscape');
+  const btnFixCommon = document.getElementById('btnFixCommon');
+  const btnClear = document.getElementById('btnClear');
+  const btnExpandAll = document.getElementById('btnExpandAll');
+  const btnCollapseAll = document.getElementById('btnCollapseAll');
+  const btnCopy = document.getElementById('btnCopy');
+  const btnNext = document.getElementById('btnNext');
+
+  let searchHits = [];
+  let hitIndex = -1;
+
+  function setStatus(kind, msg){
+    elStatus.classList.remove('ok','bad','warn');
+    if (kind) elStatus.classList.add(kind);
+    elStatus.textContent = msg;
+  }
+
+  function countStats(obj){
+    let nodes = 0, arrays = 0, objects = 0, maxDepth = 0;
+    function walk(v, depth){
+      nodes++;
+      if (depth > maxDepth) maxDepth = depth;
+      if (Array.isArray(v)){
+        arrays++;
+        for (const x of v) walk(x, depth + 1);
+      } else if (v && typeof v === 'object'){
+        objects++;
+        for (const k of Object.keys(v)) walk(v[k], depth + 1);
+      }
+    }
+    walk(obj, 1);
+    return { nodes, arrays, objects, maxDepth };
+  }
+
+  function escapeHtml(s){
+    return s.replace(/[&<>"']/g, (c)=>({
+      '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+    }[c]));
+  }
+
+  function span(cls, text){
+    return `<span class="${cls}">${escapeHtml(text)}</span>`;
+  }
+
+  function renderValue(value, indent){
+    const pad = '  '.repeat(indent);
+    const padChild = '  '.repeat(indent + 1);
+
+    if (value === null) return span('u', 'null');
+    if (typeof value === 'string') return span('s', JSON.stringify(value));
+    if (typeof value === 'number') return span('n', String(value));
+    if (typeof value === 'boolean') return span('b', String(value));
+
+    if (Array.isArray(value)){
+      if (value.length === 0) return span('p','[') + span('p',']');
+
+      const id = `n_${Math.random().toString(36).slice(2)}`;
+      let html = `<span class="node" data-node="${id}">`;
+      html += `<span class="toggle" data-toggle="${id}" title="Collapse/expand">▾</span>`;
+      html += span('p','[');
+      html += `<span class="ellipsis"> … (${value.length}) </span>`;
+      html += `<span class="children">\n`;
+
+      for (let i=0;i<value.length;i++){
+        html += padChild + renderValue(value[i], indent + 1);
+        if (i !== value.length - 1) html += span('p', ',');
+        html += `\n`;
+      }
+      html += pad + span('p',']');
+      html += `</span></span>`;
+      return html;
+    }
+
+    if (value && typeof value === 'object'){
+      const keys = Object.keys(value);
+      if (keys.length === 0) return span('p','{') + span('p','}');
+
+      const id = `n_${Math.random().toString(36).slice(2)}`;
+      let html = `<span class="node" data-node="${id}">`;
+      html += `<span class="toggle" data-toggle="${id}" title="Collapse/expand">▾</span>`;
+      html += span('p','{');
+      html += `<span class="ellipsis"> … (${keys.length}) </span>`;
+      html += `<span class="children">\n`;
+
+      keys.forEach((k, idx)=>{
+        html += padChild + span('k', JSON.stringify(k)) + span('p', ': ') + renderValue(value[k], indent + 1);
+        if (idx !== keys.length - 1) html += span('p', ',');
+        html += `\n`;
+      });
+
+      html += pad + span('p','}');
+      html += `</span></span>`;
+      return html;
+    }
+
+    return span('u', String(value));
+  }
+
+  function attachToggleHandlers(){
+    elViewer.querySelectorAll('.toggle').forEach(tg=>{
+      tg.addEventListener('click', ()=>{
+        const id = tg.getAttribute('data-toggle');
+        const node = elViewer.querySelector(`[data-node="${id}"]`);
+        if (!node) return;
+        const collapsed = node.classList.toggle('collapsed');
+        tg.textContent = collapsed ? '▸' : '▾';
+      });
+    });
+  }
+
+  function expandCollapseAll(collapse){
+    elViewer.querySelectorAll('.node').forEach(node=>{
+      node.classList.toggle('collapsed', collapse);
+    });
+    elViewer.querySelectorAll('.toggle').forEach(tg=>{
+      tg.textContent = collapse ? '▸' : '▾';
+    });
+  }
+
+  function safeParseJson(text){
+    return JSON.parse(text);
+  }
+
+  function tryFixCommonIssues(text){
+    let t = text.trim();
+    t = t.replace(/[“”]/g, '"').replace(/[‘’]/g, "'");
+
+    if ((t.startsWith("'") && t.endsWith("'")) || (t.startsWith("‘") && t.endsWith("’"))){
+      t = t.slice(1, -1);
+    }
+
+    t = t.replace(/'([A-Za-z0-9_\-]+)'\s*:/g, '"$1":');
+    t = t.replace(/:\s*'([^'\n\r]*)'/g, (m, g1)=>`: "${g1.replace(/"/g,'\\"')}"`);
+    t = t.replace(/,\s*'([^'\n\r]*)'/g, (m, g1)=>`, "${g1.replace(/"/g,'\\"')}"`);
+    t = t.replace(/\[\s*'([^'\n\r]*)'/g, (m, g1)=>`[ "${g1.replace(/"/g,'\\"')}"`);
+
+    t = t.replace(/,\s*([}\]])/g, '$1');
+    return t;
+  }
+
+  // Unescape: handle cases where the input is a JSON string containing JSON, e.g.
+  // "{\"a\":1}" or "\"{\\n \\\"a\\\": 1 }\""
+  function unescapeInput(){
+    const raw = elInput.value.trim();
+    if (!raw){
+      setStatus('bad', 'Nothing to unescape.');
+      return;
+    }
+
+    // Strategy:
+    // 1) First, try JSON.parse(raw). If it yields an object/array => already JSON.
+    // 2) If it yields a string => treat as "escaped JSON" and parse again.
+    // 3) If step 1 fails, try to wrap into a JSON string and parse (common when user pastes without surrounding quotes).
+    try{
+      const first = JSON.parse(raw);
+
+      if (typeof first === 'string'){
+        // The parsed value is a string; likely contains JSON text.
+        const s = first.trim();
+        try{
+          const second = JSON.parse(s);
+          elInput.value = JSON.stringify(second, null, 2);
+          setStatus('ok', 'Unescaped successfully (string → JSON).');
+          renderJson(second);
+          updateStats(second);
+        }catch(e2){
+          // Not JSON inside; still output the unescaped string.
+          elInput.value = s;
+          setStatus('warn', 'Unescaped to plain text (not valid JSON yet).');
+          elViewer.innerHTML = `<span class="u">${escapeHtml(s)}</span>`;
+          resetSearch();
+          elStats.textContent = '';
+        }
+        return;
+      }
+
+      // If it's already an object/array/primitive, keep as-is but pretty print
+      elInput.value = JSON.stringify(first, null, 2);
+      setStatus('ok', 'Input is already valid JSON (no unescape needed).');
+      renderJson(first);
+      updateStats(first);
+      return;
+    }catch(_e){
+      // If user pasted something like {\"a\":1} (no surrounding quotes), we can try:
+      // wrap as a JSON string and parse => get a real string, then parse again.
+      try{
+        const wrapped = `"${raw.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+        const s = JSON.parse(wrapped);
+        try{
+          const obj = JSON.parse(s);
+          elInput.value = JSON.stringify(obj, null, 2);
+          setStatus('ok', 'Unescaped successfully (wrapped string → JSON).');
+          renderJson(obj);
+          updateStats(obj);
+        }catch(e2){
+          elInput.value = s;
+          setStatus('warn', 'Unescaped to plain text (not valid JSON yet).');
+          elViewer.innerHTML = `<span class="u">${escapeHtml(s)}</span>`;
+          resetSearch();
+          elStats.textContent = '';
+        }
+      }catch(e3){
+        setStatus('bad', 'Unescape failed: ' + (e3 && e3.message ? e3.message : String(e3)));
+      }
+    }
+  }
+
+  // Escape current JSON into a single JSON string:
+  // e.g. {"a":1} -> "{\"a\":1}"
+  function escapeAsJsonString(){
+    const raw = elInput.value.trim();
+    if (!raw){
+      setStatus('bad', 'Nothing to escape.');
+      return;
+    }
+    try{
+      const obj = JSON.parse(raw);
+      const compact = JSON.stringify(obj);        // normalized JSON
+      const escaped = JSON.stringify(compact);    // JSON string containing JSON
+      elInput.value = escaped;
+      setStatus('ok', 'Escaped as JSON string.');
+      // Viewer: show the inner JSON (pretty) for usability
+      renderJson(obj);
+      updateStats(obj);
+    }catch(e){
+      // If it isn't JSON, escape the text as a JSON string anyway
+      try{
+        elInput.value = JSON.stringify(raw);
+        setStatus('warn', 'Input is not valid JSON; escaped as plain JSON string.');
+        elViewer.innerHTML = `<span class="u">${escapeHtml(raw)}</span>`;
+        resetSearch();
+        elStats.textContent = '';
+      }catch(e2){
+        setStatus('bad', 'Escape failed: ' + (e2 && e2.message ? e2.message : String(e2)));
+      }
+    }
+  }
+
+  function updateStats(obj){
+    const s = countStats(obj);
+    elStats.textContent = `nodes ${s.nodes} | objects ${s.objects} | arrays ${s.arrays} | depth ${s.maxDepth}`;
+  }
+
+  function renderJson(obj){
+    const html = renderValue(obj, 0);
+    elViewer.innerHTML = html;
+    attachToggleHandlers();
+    expandCollapseAll(false);
+    resetSearch();
+  }
+
+  function format(){
+    const text = elInput.value.trim();
+    if (!text){
+      setStatus('bad', 'Please paste JSON.');
+      elStats.textContent = '';
+      return;
+    }
+    try{
+      const obj = safeParseJson(text);
+      elInput.value = JSON.stringify(obj, null, 2);
+      updateStats(obj);
+      setStatus('ok', 'Valid JSON.');
+      renderJson(obj);
+    }catch(e){
+      setStatus('bad', 'Invalid JSON: ' + (e && e.message ? e.message : String(e)));
+      elStats.textContent = '';
+      elViewer.innerHTML = `<span class="err">${escapeHtml(String(e && e.stack ? e.stack : e))}</span>`;
+      resetSearch();
+    }
+  }
+
+  function minify(){
+    const text = elInput.value.trim();
+    if (!text){
+      setStatus('bad', 'Please paste JSON.');
+      return;
+    }
+    try{
+      const obj = safeParseJson(text);
+      elInput.value = JSON.stringify(obj);
+      updateStats(obj);
+      setStatus('ok', 'Minified.');
+      renderJson(obj);
+    }catch(e){
+      setStatus('bad', 'Minify failed: ' + (e && e.message ? e.message : String(e)));
+    }
+  }
+
+  function fixAndFormat(){
+    const text = elInput.value;
+    if (!text.trim()){
+      setStatus('bad', 'Please paste JSON.');
+      return;
+    }
+    elInput.value = tryFixCommonIssues(text);
+    format();
+  }
+
+  async function copyViewer(){
+    const t = getPrettyTextOrInput();
+    await copyText(t);
+  }
+
+  function getPrettyTextOrInput(){
+    try{
+      const obj = JSON.parse(elInput.value);
+      return JSON.stringify(obj, null, 2);
+    }catch(_){
+      return elInput.value;
+    }
+  }
+
+  async function copyText(text){
+    try{
+      await navigator.clipboard.writeText(text);
+      elSearchStatus.textContent = 'Copied';
+      elSearchStatus.classList.remove('bad');
+      elSearchStatus.classList.add('ok');
+      setTimeout(()=>{
+        elSearchStatus.classList.remove('ok');
+        updateSearchStatus();
+      }, 900);
+    }catch(_){
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      elSearchStatus.textContent = 'Copied';
+      elSearchStatus.classList.add('ok');
+      setTimeout(()=>{
+        elSearchStatus.classList.remove('ok');
+        updateSearchStatus();
+      }, 900);
+    }
+  }
+
+  function resetSearch(){
+    searchHits = [];
+    hitIndex = -1;
+    elSearch.value = '';
+    updateSearchStatus();
+  }
+
+  function updateSearchStatus(){
+    elSearchStatus.classList.remove('ok','bad','warn');
+    elSearchStatus.textContent = `Search: ${searchHits.length}`;
+  }
+
+  function escapeRegExp(s){
+    return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function performSearch(){
+    const q = (elSearch.value || '').trim();
+    if (!q){
+      // Clear highlights by re-rendering from JSON (if possible)
+      try{
+        const obj = JSON.parse(elInput.value);
+        renderJson(obj);
+        updateStats(obj);
+        setStatus('ok', 'Valid JSON.');
+      }catch(_){}
+      searchHits = [];
+      hitIndex = -1;
+      updateSearchStatus();
+      return;
+    }
+
+    let obj;
+    try{
+      obj = JSON.parse(elInput.value);
+    }catch(_e){
+      elSearchStatus.textContent = 'Search requires valid JSON';
+      elSearchStatus.classList.add('bad');
+      return;
+    }
+
+    renderJson(obj);
+
+    const re = new RegExp(escapeRegExp(q), 'gi');
+    const walker = document.createTreeWalker(elViewer, NodeFilter.SHOW_TEXT, {
+      acceptNode(node){
+        if (!node.nodeValue) return NodeFilter.FILTER_REJECT;
+        if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_ACCEPT;
+      }
+    });
+
+    const toProcess = [];
+    while (walker.nextNode()) toProcess.push(walker.currentNode);
+
+    searchHits = [];
+    toProcess.forEach(node=>{
+      const text = node.nodeValue;
+      if (!re.test(text)) return;
+      re.lastIndex = 0;
+
+      const frag = document.createDocumentFragment();
+      let last = 0;
+      let m;
+      while ((m = re.exec(text)) !== null){
+        const start = m.index;
+        const end = start + m[0].length;
+        if (start > last) frag.appendChild(document.createTextNode(text.slice(last, start)));
+        const mark = document.createElement('mark');
+        mark.textContent = text.slice(start, end);
+        frag.appendChild(mark);
+        searchHits.push(mark);
+        last = end;
+      }
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      node.parentNode.replaceChild(frag, node);
+    });
+
+    hitIndex = -1;
+    updateSearchStatus();
+    if (searchHits.length > 0) gotoNextHit();
+  }
+
+  function gotoNextHit(){
+    if (!searchHits.length) return;
+    hitIndex = (hitIndex + 1) % searchHits.length;
+    const mark = searchHits[hitIndex];
+
+    // Expand collapsed ancestors
+    let p = mark.parentElement;
+    while (p){
+      if (p.classList && p.classList.contains('node')){
+        p.classList.remove('collapsed');
+        const id = p.getAttribute('data-node');
+        const tg = elViewer.querySelector(`.toggle[data-toggle="${id}"]`);
+        if (tg) tg.textContent = '▾';
+      }
+      p = p.parentElement;
+    }
+
+    mark.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+
+  // Events
+  btnFormat.addEventListener('click', format);
+  btnMinify.addEventListener('click', minify);
+  btnUnescape.addEventListener('click', unescapeInput);
+  btnEscape.addEventListener('click', escapeAsJsonString);
+  btnFixCommon.addEventListener('click', fixAndFormat);
+
+  btnClear.addEventListener('click', ()=>{
+    elInput.value = '';
+    elViewer.innerHTML = `<span class="p">{</span><span class="u"> Paste JSON on the left and click “Format” </span><span class="p">}</span>`;
+    elStats.textContent = '';
+    setStatus(null, 'Cleared.');
+    resetSearch();
+  });
+
+  btnExpandAll.addEventListener('click', ()=> expandCollapseAll(false));
+  btnCollapseAll.addEventListener('click', ()=> expandCollapseAll(true));
+  btnCopy.addEventListener('click', copyViewer);
+
+  elSearch.addEventListener('input', ()=>{
+    window.clearTimeout(elSearch._t);
+    elSearch._t = window.setTimeout(performSearch, 200);
+  });
+  btnNext.addEventListener('click', gotoNextHit);
+
+  window.addEventListener('keydown', (e)=>{
+    const isMac = navigator.platform.toUpperCase().includes('MAC');
+    const mod = isMac ? e.metaKey : e.ctrlKey;
+    if (mod && e.key === 'Enter'){
+      e.preventDefault();
+      format();
+    }
+  });
+
+  // Optional demo
+  elInput.value = `{
+  "user": { "id": 123, "name": "Alice", "active": true },
+  "escapedExample": "{\\"a\\":1,\\"b\\":[\\"x\\",true,null]}",
+  "items": [
+    { "sku": "A-001", "qty": 2, "price": 19.9 },
+    { "sku": "B-002", "qty": 1, "price": 5 }
+  ]
+}`;
+  format();
+})();
+</script>
+</body>
+</html>

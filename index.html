@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WonShaw Pages</title>
+    <style>
+      :root {
+        --bg: #191716;
+        --card: #26221f;
+        --ink: #f4efe8;
+        --muted: #b5aca1;
+        --accent: #6dc3b3;
+        --accent-2: #f2a56f;
+        --shadow: 0 24px 70px rgba(0, 0, 0, 0.4);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Alegreya Sans", "Segoe UI", sans-serif;
+        color: var(--ink);
+        min-height: 100vh;
+        background: var(--bg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 48px 20px;
+      }
+
+      main {
+        width: min(900px, 100%);
+        background: var(--card);
+        border-radius: 28px;
+        padding: 48px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+      }
+
+      h1 {
+        font-family: "Playfair Display", "Times New Roman", serif;
+        font-size: clamp(2.2rem, 3vw, 3.4rem);
+        margin: 0 0 16px;
+        position: relative;
+      }
+
+      p {
+        margin: 0 0 32px;
+        color: var(--muted);
+        font-size: 1.05rem;
+        max-width: 620px;
+      }
+
+
+      .links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+      }
+
+      a.card {
+        text-decoration: none;
+        color: inherit;
+        background: #2d2723;
+        border-radius: 18px;
+        padding: 24px;
+        display: grid;
+        gap: 10px;
+        border: 1px solid rgba(109, 195, 179, 0.2);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        position: relative;
+        z-index: 1;
+      }
+
+      a.card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 18px 34px rgba(0, 0, 0, 0.35);
+      }
+
+      .card span {
+        font-weight: 700;
+        font-size: 1.1rem;
+      }
+
+      .card small {
+        color: var(--muted);
+      }
+
+      .tag {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--accent-2);
+      }
+
+      footer {
+        margin-top: 28px;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      @media (max-width: 640px) {
+        main {
+          padding: 32px 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>WonShaw Pages</h1>
+      <p>A simple hub for the tools hosted here.</p>
+      <div class="links">
+        <a class="card" href="/diff.html">
+          <span>Diff Viewer</span>
+          <small>Compare text changes</small>
+          <div class="tag">diff.html</div>
+        </a>
+        <a class="card" href="/json.html">
+          <span>JSON Helper</span>
+          <small>Format and inspect JSON</small>
+          <div class="tag">json.html</div>
+        </a>
+        <a class="card" href="/hash.html">
+          <span>Hash Tool</span>
+          <small>Hash text or local files</small>
+          <div class="tag">hash.html</div>
+        </a>
+      </div>
+      <footer>© wonshaw.github.io All rights reserved.</footer>
+    </main>
+  </body>
+</html>

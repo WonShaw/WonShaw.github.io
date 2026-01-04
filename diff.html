@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>String Diff Highlighter (Pure HTML)</title>
+  <style>
+    :root{
+      --bg:#191716;
+      --panel:#26221f;
+      --panel2:#2d2723;
+      --text:#f4efe8;
+      --muted:#b5aca1;
+      --border:rgba(255,255,255,.08);
+      --accent:#6dc3b3;
+
+      --ins-bg: rgba(109, 195, 179, .18);
+      --ins-bd: rgba(109, 195, 179, .45);
+      --del-bg: rgba(242, 165, 111, .18);
+      --del-bd: rgba(242, 165, 111, .45);
+      --eq-bg: rgba(255, 255, 255, .05);
+      --warn:#f2a56f;
+      --shadow: 0 10px 28px rgba(0,0,0,.45);
+      --radius: 16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--ui);
+      background: var(--bg);
+      color:var(--text);
+    }
+
+    .container{
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 18px 16px 28px;
+    }
+
+    header{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:16px;
+      padding: 12px 4px 18px;
+    }
+    .title h1{
+      margin:0;
+      font-size: 20px;
+      letter-spacing:.2px;
+    }
+    .title p{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size: 13px;
+      line-height:1.5;
+      max-width: 70ch;
+    }
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      box-shadow: var(--shadow);
+    }
+    .dot{
+      width:8px;height:8px;border-radius:50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(109,195,179,.12);
+      flex:0 0 auto;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .panel{
+      background: var(--panel);
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+
+    .panel .hd{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,.04);
+      border-bottom: 1px solid var(--border);
+    }
+    .panel .hd .left{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-width: 0;
+    }
+    .panel .hd .left strong{
+      font-size: 13px;
+      letter-spacing:.2px;
+    }
+    .panel .hd .left span{
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow:hidden;
+      text-overflow: ellipsis;
+      max-width: 60vw;
+    }
+    .panel .bd{
+      padding: 12px 14px 14px;
+    }
+
+    textarea{
+      width:100%;
+      min-height: 160px;
+      resize: vertical;
+      background: var(--panel2);
+      color: var(--text);
+      border:1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 12px;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.45;
+      outline: none;
+    }
+    textarea:focus{
+      border-color: rgba(119,167,255,.55);
+      box-shadow: 0 0 0 4px rgba(119,167,255,.12);
+    }
+
+    .controls{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items:center;
+      justify-content:space-between;
+      margin-top: 10px;
+    }
+    .ctrl-left, .ctrl-right{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items:center;
+    }
+
+    .btn{
+      appearance:none;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding: 9px 11px;
+      border-radius: 12px;
+      font-size: 12px;
+      cursor:pointer;
+      transition: transform .04s ease, background .15s ease, border-color .15s ease;
+      user-select:none;
+    }
+    .btn:hover{ background: rgba(255,255,255,.09); border-color: rgba(255,255,255,.18); }
+    .btn:active{ transform: translateY(1px); }
+    .btn.primary{
+      border-color: rgba(119,167,255,.55);
+      background: rgba(119,167,255,.14);
+    }
+    .btn.warn{
+      border-color: rgba(255,204,102,.55);
+      background: rgba(255,204,102,.12);
+    }
+    .btn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+
+    .toggle{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 10px;
+      border:1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255,255,255,.04);
+      font-size: 12px;
+      color: var(--muted);
+      user-select:none;
+    }
+    .toggle input{ accent-color: var(--accent); }
+
+    select{
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 12px;
+      outline:none;
+    }
+    select:focus{
+      border-color: rgba(119,167,255,.55);
+      box-shadow: 0 0 0 4px rgba(119,167,255,.10);
+    }
+
+    .results{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    .diffBox{
+      background: var(--panel2);
+      border:1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 12px;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.6;
+      overflow:auto;
+      max-height: 45vh;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .legend{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      align-items:center;
+      color: var(--muted);
+      font-size:12px;
+      margin-top: 10px;
+    }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.04);
+    }
+    .swatch{
+      width:10px; height:10px; border-radius:3px;
+      border: 1px solid transparent;
+    }
+    .swatch.ins{ background: var(--ins-bg); border-color: var(--ins-bd); }
+    .swatch.del{ background: var(--del-bg); border-color: var(--del-bd); }
+    .swatch.eq { background: var(--eq-bg); border-color: rgba(255,255,255,.16); }
+
+    .tok{
+      padding: 0 1px;
+      border-radius: 4px;
+    }
+    .tok.eq{ background: var(--eq-bg); }
+    .tok.ins{ background: var(--ins-bg); outline: 1px solid var(--ins-bd); }
+    .tok.del{ background: var(--del-bg); outline: 1px solid var(--del-bd); text-decoration: line-through; }
+
+    .hint{
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    @media (min-width: 980px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+      .results{ grid-template-columns: 1fr 1fr; }
+      textarea{ min-height: 220px; }
+      .panel .hd .left span{ max-width: 38ch; }
+    }
+
+    footer{
+      padding: 8px 0 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <header>
+      <div class="title">
+        <h1>String Diff Highlighter</h1>
+      </div>
+      <div class="badge"><span class="dot"></span>Offline-only: no server requests.</div>
+    </header>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="hd">
+          <div class="left">
+            <strong>Left (Original)</strong>
+            <span id="leftMeta">0 chars</span>
+          </div>
+        </div>
+        <div class="bd">
+          <textarea id="leftInput" placeholder="Paste the original text here..."></textarea>
+          <div class="controls">
+            <div class="ctrl-left">
+              <label class="toggle"><input id="ignoreCase" type="checkbox"> Ignore case</label>
+              <label class="toggle"><input id="ignoreSpace" type="checkbox"> Ignore whitespace</label>
+              <label class="toggle"><input id="showEquals" type="checkbox" checked> Show unchanged</label>
+              <label class="toggle"><input id="autoUpdate" type="checkbox" checked> Auto compare</label>
+            </div>
+            <div class="ctrl-right">
+              <select id="mode">
+                <option value="char">Diff mode: Characters</option>
+                <option value="word">Diff mode: Words</option>
+              </select>
+              <button class="btn" id="swapBtn" type="button">Swap</button>
+              <button class="btn warn" id="clearBtn" type="button">Clear</button>
+              <button class="btn primary" id="compareBtn" type="button">Compare</button>
+            </div>
+          </div>
+          <div class="hint">
+            Tip: In “Words” mode, whitespace is preserved between tokens so you can see formatting shifts.
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="hd">
+          <div class="left">
+            <strong>Right (Modified)</strong>
+            <span id="rightMeta">0 chars</span>
+          </div>
+        </div>
+        <div class="bd">
+          <textarea id="rightInput" placeholder="Paste the modified text here..."></textarea>
+          <div class="legend">
+            <span class="chip"><span class="swatch del"></span> Deleted (from Left)</span>
+            <span class="chip"><span class="swatch ins"></span> Added (in Right)</span>
+            <span class="chip"><span class="swatch eq"></span> Unchanged</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-top:14px;">
+      <div class="hd">
+        <div class="left">
+          <strong>Results</strong>
+          <span id="stats">No comparison yet.</span>
+        </div>
+        <div class="ctrl-right">
+          <button class="btn" id="copyUnified" type="button" disabled>Copy unified</button>
+          <button class="btn" id="copyLeft" type="button" disabled>Copy left view</button>
+          <button class="btn" id="copyRight" type="button" disabled>Copy right view</button>
+          <button class="btn" id="downloadHtml" type="button" disabled>Download HTML</button>
+        </div>
+      </div>
+      <div class="bd">
+        <div class="results">
+          <div>
+            <div class="hint" style="margin:0 0 8px;">Unified diff (deletions + insertions in one view)</div>
+            <div id="unified" class="diffBox" aria-label="Unified diff output"></div>
+          </div>
+          <div>
+            <div class="hint" style="margin:0 0 8px;">Side-by-side (left shows deletions, right shows insertions)</div>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div>
+                <div class="hint" style="margin:0 0 6px;">Left view</div>
+                <div id="leftView" class="diffBox" aria-label="Left diff output"></div>
+              </div>
+              <div>
+                <div class="hint" style="margin:0 0 6px;">Right view</div>
+                <div id="rightView" class="diffBox" aria-label="Right diff output"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="hint" id="warnLine" style="margin-top:12px; color: var(--warn); display:none;">
+          Warning: Large inputs may be slow in pure JS diff mode. Consider “Words” mode for long texts.
+        </div>
+      </div>
+    </section>
+  </div>
+  <footer>© wonshaw.github.io All rights reserved.</footer>
+
+  <script>
+    // ---------- Utility: escape HTML ----------
+    function esc(s){
+      return s.replace(/[&<>"']/g, (c) => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+      }[c]));
+    }
+
+    // ---------- Tokenizers ----------
+    // Char mode keeps every code unit (good enough for most text; emojis may split).
+    function tokenizeChar(str){
+      return Array.from(str); // handles many unicode codepoints better than split("")
+    }
+
+    // Word mode:
+    // - Split into tokens of either: whitespace runs OR non-whitespace runs
+    // - This preserves spacing as diffable tokens.
+    function tokenizeWord(str){
+      // match whitespace or non-whitespace sequences
+      const m = str.match(/(\s+|[^\s]+)/g);
+      return m ? m : [];
+    }
+
+    // ---------- Normalization for comparison (while preserving original tokens for rendering) ----------
+    function normalizeToken(t, ignoreCase, ignoreSpace){
+      let x = t;
+      if(ignoreSpace){
+        // collapse all whitespace to a single space token, but keep non-space as-is
+        if(/^\s+$/.test(x)) x = " ";
+      }
+      if(ignoreCase) x = x.toLowerCase();
+      return x;
+    }
+
+    // ---------- Diff (LCS-based) ----------
+    // Produces ops: {type: 'eq'|'ins'|'del', value: string}
+    function diffTokens(aTokens, bTokens, opts){
+      const {ignoreCase, ignoreSpace} = opts;
+
+      const a = aTokens.map(t => normalizeToken(t, ignoreCase, ignoreSpace));
+      const b = bTokens.map(t => normalizeToken(t, ignoreCase, ignoreSpace));
+
+      const n = a.length, m = b.length;
+
+      // Heuristic guard for very large inputs
+      const cellCount = (n + 1) * (m + 1);
+      const warn = cellCount > 6_000_000; // ~6M cells
+      // Use a space-optimized DP (two rows) but still needs backtracking. We'll store directions sparsely.
+      // To enable backtracking without full matrix, store "arrows" as Uint8Array per row (0,1,2).
+      // 0 = from top, 1 = from left, 2 = from diag (match)
+      const arrows = Array(n + 1);
+      let prev = new Uint32Array(m + 1);
+      let curr = new Uint32Array(m + 1);
+
+      arrows[0] = new Uint8Array(m + 1);
+
+      for(let i=1;i<=n;i++){
+        arrows[i] = new Uint8Array(m + 1);
+        curr[0] = 0;
+        for(let j=1;j<=m;j++){
+          if(a[i-1] === b[j-1]){
+            const v = prev[j-1] + 1;
+            curr[j] = v;
+            arrows[i][j] = 2; // diag
+          }else{
+            const up = prev[j];
+            const left = curr[j-1];
+            if(up >= left){
+              curr[j] = up;
+              arrows[i][j] = 0; // top
+            }else{
+              curr[j] = left;
+              arrows[i][j] = 1; // left
+            }
+          }
+        }
+        // swap
+        const tmp = prev; prev = curr; curr = tmp;
+      }
+
+      // Backtrack
+      let i = n, j = m;
+      const ops = [];
+      while(i>0 || j>0){
+        if(i>0 && j>0 && arrows[i][j] === 2){
+          ops.push({type:"eq", aIndex:i-1, bIndex:j-1});
+          i--; j--;
+        }else if(i>0 && (j===0 || arrows[i][j] === 0)){
+          ops.push({type:"del", aIndex:i-1});
+          i--;
+        }else{
+          ops.push({type:"ins", bIndex:j-1});
+          j--;
+        }
+      }
+      ops.reverse();
+
+      // Convert to value-based ops using original tokens
+      const out = [];
+      for(const op of ops){
+        if(op.type === "eq"){
+          out.push({type:"eq", value: aTokens[op.aIndex]});
+        }else if(op.type === "del"){
+          out.push({type:"del", value: aTokens[op.aIndex]});
+        }else{
+          out.push({type:"ins", value: bTokens[op.bIndex]});
+        }
+      }
+      return {ops: out, warn};
+    }
+
+    // ---------- Render ----------
+    function renderUnified(ops, showEquals){
+      let html = "";
+      for(const op of ops){
+        if(op.type === "eq"){
+          if(!showEquals) continue;
+          html += `<span class="tok eq">${esc(op.value)}</span>`;
+        }else if(op.type === "del"){
+          html += `<span class="tok del">${esc(op.value)}</span>`;
+        }else{
+          html += `<span class="tok ins">${esc(op.value)}</span>`;
+        }
+      }
+      return html || '<span style="color:var(--muted)">Nothing to show.</span>';
+    }
+
+    // Side views:
+    // - leftView: show eq + del (and optionally hide eq)
+    // - rightView: show eq + ins
+    function renderSide(ops, which, showEquals){
+      let html = "";
+      for(const op of ops){
+        if(op.type === "eq"){
+          if(!showEquals) continue;
+          html += `<span class="tok eq">${esc(op.value)}</span>`;
+        }else if(op.type === "del"){
+          if(which === "left"){
+            html += `<span class="tok del">${esc(op.value)}</span>`;
+          }else{
+            // keep spacing alignment for whitespace-only tokens
+            if(/^\s+$/.test(op.value)) html += esc(op.value);
+          }
+        }else{ // ins
+          if(which === "right"){
+            html += `<span class="tok ins">${esc(op.value)}</span>`;
+          }else{
+            if(/^\s+$/.test(op.value)) html += esc(op.value);
+          }
+        }
+      }
+      return html || '<span style="color:var(--muted)">Nothing to show.</span>';
+    }
+
+    function countStats(ops){
+      let ins = 0, del = 0, eq = 0;
+      for(const op of ops){
+        if(op.type === "ins") ins++;
+        else if(op.type === "del") del++;
+        else eq++;
+      }
+      return {ins, del, eq, total: ops.length};
+    }
+
+    // ---------- App wiring ----------
+    const leftInput = document.getElementById("leftInput");
+    const rightInput = document.getElementById("rightInput");
+    const ignoreCase = document.getElementById("ignoreCase");
+    const ignoreSpace = document.getElementById("ignoreSpace");
+    const showEquals = document.getElementById("showEquals");
+    const autoUpdate = document.getElementById("autoUpdate");
+    const mode = document.getElementById("mode");
+
+    const compareBtn = document.getElementById("compareBtn");
+    const swapBtn = document.getElementById("swapBtn");
+    const clearBtn = document.getElementById("clearBtn");
+
+    const unified = document.getElementById("unified");
+    const leftView = document.getElementById("leftView");
+    const rightView = document.getElementById("rightView");
+
+    const statsEl = document.getElementById("stats");
+    const leftMeta = document.getElementById("leftMeta");
+    const rightMeta = document.getElementById("rightMeta");
+    const warnLine = document.getElementById("warnLine");
+
+    const copyUnified = document.getElementById("copyUnified");
+    const copyLeft = document.getElementById("copyLeft");
+    const copyRight = document.getElementById("copyRight");
+    const downloadHtml = document.getElementById("downloadHtml");
+
+    function updateMeta(){
+      leftMeta.textContent = `${leftInput.value.length} chars`;
+      rightMeta.textContent = `${rightInput.value.length} chars`;
+    }
+
+    function tokenizeByMode(text){
+      return mode.value === "word" ? tokenizeWord(text) : tokenizeChar(text);
+    }
+
+    function doCompare(){
+      updateMeta();
+
+      const a = leftInput.value;
+      const b = rightInput.value;
+
+      if(a.length === 0 && b.length === 0){
+        unified.innerHTML = '<span style="color:var(--muted)">Paste text into both boxes to compare.</span>';
+        leftView.innerHTML = '<span style="color:var(--muted)">Left view.</span>';
+        rightView.innerHTML = '<span style="color:var(--muted)">Right view.</span>';
+        statsEl.textContent = "No comparison yet.";
+        warnLine.style.display = "none";
+        setActionEnabled(false);
+        return;
+      }
+
+      const aTokens = tokenizeByMode(a);
+      const bTokens = tokenizeByMode(b);
+
+      const {ops, warn} = diffTokens(aTokens, bTokens, {
+        ignoreCase: ignoreCase.checked,
+        ignoreSpace: ignoreSpace.checked
+      });
+
+      warnLine.style.display = warn ? "block" : "none";
+
+      unified.innerHTML = renderUnified(ops, showEquals.checked);
+      leftView.innerHTML = renderSide(ops, "left", showEquals.checked);
+      rightView.innerHTML = renderSide(ops, "right", showEquals.checked);
+
+      const st = countStats(ops);
+      statsEl.textContent = `Tokens: ${st.total} • Added: ${st.ins} • Deleted: ${st.del} • Unchanged: ${st.eq}`;
+
+      setActionEnabled(true);
+    }
+
+    function setActionEnabled(enabled){
+      copyUnified.disabled = !enabled;
+      copyLeft.disabled = !enabled;
+      copyRight.disabled = !enabled;
+      downloadHtml.disabled = !enabled;
+    }
+
+    // Debounce auto compare
+    let t = null;
+    function scheduleCompare(){
+      if(!autoUpdate.checked) { updateMeta(); return; }
+      clearTimeout(t);
+      t = setTimeout(doCompare, 200);
+    }
+
+    // Clipboard helpers: copy as plain text (rendered textContent)
+    async function copyFrom(el){
+      const text = el.textContent || "";
+      try{
+        await navigator.clipboard.writeText(text);
+      }catch(e){
+        // fallback
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+      }
+    }
+
+    function downloadResultHtml(){
+      const html =
+`<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Diff Result</title>
+<style>
+body{font-family:ui-monospace,Menlo,Consolas,monospace;margin:20px;}
+.tok{padding:0 1px;border-radius:4px;}
+.eq{background:rgba(0,0,0,.04);}
+.ins{background:rgba(109,195,179,.18); outline:1px solid rgba(109,195,179,.45);}
+.del{background:rgba(242,165,111,.18); outline:1px solid rgba(242,165,111,.45); text-decoration: line-through;}
+pre{white-space:pre-wrap;word-break:break-word;line-height:1.6;font-size:13px;}
+</style>
+</head>
+<body>
+<h2>Unified Diff</h2>
+<pre>${unified.innerHTML}</pre>
+<h2>Left View</h2>
+<pre>${leftView.innerHTML}</pre>
+<h2>Right View</h2>
+<pre>${rightView.innerHTML}</pre>
+</body>
+</html>`;
+      const blob = new Blob([html], {type:"text/html;charset=utf-8"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "diff-result.html";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    // Events
+    leftInput.addEventListener("input", scheduleCompare);
+    rightInput.addEventListener("input", scheduleCompare);
+    ignoreCase.addEventListener("change", scheduleCompare);
+    ignoreSpace.addEventListener("change", scheduleCompare);
+    showEquals.addEventListener("change", scheduleCompare);
+    mode.addEventListener("change", scheduleCompare);
+    autoUpdate.addEventListener("change", () => {
+      if(autoUpdate.checked) scheduleCompare();
+    });
+
+    compareBtn.addEventListener("click", doCompare);
+    swapBtn.addEventListener("click", () => {
+      const tmp = leftInput.value;
+      leftInput.value = rightInput.value;
+      rightInput.value = tmp;
+      scheduleCompare();
+    });
+    clearBtn.addEventListener("click", () => {
+      leftInput.value = "";
+      rightInput.value = "";
+      scheduleCompare();
+    });
+
+    copyUnified.addEventListener("click", () => copyFrom(unified));
+    copyLeft.addEventListener("click", () => copyFrom(leftView));
+    copyRight.addEventListener("click", () => copyFrom(rightView));
+    downloadHtml.addEventListener("click", downloadResultHtml);
+
+    // init
+    setActionEnabled(false);
+    updateMeta();
+    unified.innerHTML = '<span style="color:var(--muted)">Paste text into both boxes to compare.</span>';
+    leftView.innerHTML = '<span style="color:var(--muted)">Left view.</span>';
+    rightView.innerHTML = '<span style="color:var(--muted)">Right view.</span>';
+  </script>
+</body>
+</html>

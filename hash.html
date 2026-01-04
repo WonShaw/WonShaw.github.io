@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Hash Tool</title>
+    <style>
+      :root {
+        --bg: #191716;
+        --card: #26221f;
+        --card-2: #2d2723;
+        --ink: #f4efe8;
+        --muted: #b5aca1;
+        --accent: #6dc3b3;
+        --accent-2: #f2a56f;
+        --border: rgba(255, 255, 255, 0.08);
+        --shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Alegreya Sans", "Segoe UI", sans-serif;
+        min-height: 100vh;
+      }
+
+      header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 20px 24px 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      header h1 {
+        margin: 0 0 6px;
+        font-family: "Playfair Display", "Times New Roman", serif;
+        font-size: 1.5rem;
+      }
+
+      .title-block {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .notice {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 4px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: var(--card-2);
+        border: 1px solid rgba(109, 195, 179, 0.2);
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 4px rgba(109, 195, 179, 0.12);
+      }
+
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px 24px 36px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 16px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 16px;
+        display: grid;
+        gap: 12px;
+      }
+
+      .card h2 {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 160px;
+        resize: vertical;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--card-2);
+        color: var(--ink);
+        padding: 12px;
+        font-family: var(--mono);
+        font-size: 0.9rem;
+        outline: none;
+      }
+
+      textarea:focus {
+        border-color: rgba(109, 195, 179, 0.45);
+        box-shadow: 0 0 0 3px rgba(109, 195, 179, 0.12);
+      }
+
+      input[type="file"] {
+        width: 100%;
+        color: var(--muted);
+      }
+
+      .algo {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: var(--card-2);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      button {
+        cursor: pointer;
+        border: 1px solid var(--border);
+        background: var(--card-2);
+        color: var(--ink);
+        border-radius: 10px;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+      }
+
+      button.primary {
+        background: rgba(109, 195, 179, 0.14);
+        border-color: rgba(109, 195, 179, 0.35);
+      }
+
+      button.secondary {
+        background: rgba(242, 165, 111, 0.14);
+        border-color: rgba(242, 165, 111, 0.35);
+      }
+
+      .output {
+        display: grid;
+        gap: 12px;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 120px 1fr auto;
+        gap: 12px;
+        align-items: center;
+        padding: 10px 12px;
+        border-radius: 12px;
+        background: var(--card-2);
+        border: 1px solid var(--border);
+      }
+
+      .row code {
+        font-family: var(--mono);
+        font-size: 0.85rem;
+        word-break: break-all;
+      }
+
+      .muted {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      footer {
+        margin-top: 22px;
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      @media (max-width: 720px) {
+        .row {
+          grid-template-columns: 1fr;
+          gap: 6px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="title-block">
+        <h1>Hash Tool</h1>
+      </div>
+      <div class="notice"><span class="dot"></span>Offline-only: no server requests.</div>
+    </header>
+    <main>
+      <section class="card" style="margin-bottom: 16px;">
+        <h2>Algorithms</h2>
+        <div class="algo" id="algoList">
+          <label class="chip"><input type="checkbox" value="MD5" checked /> MD5</label>
+          <label class="chip"><input type="checkbox" value="SHA-1" checked /> SHA-1</label>
+          <label class="chip"><input type="checkbox" value="SHA-256" checked /> SHA-256</label>
+          <label class="chip"><input type="checkbox" value="SHA-384" checked /> SHA-384</label>
+          <label class="chip"><input type="checkbox" value="SHA-512" checked /> SHA-512</label>
+        </div>
+        <div class="actions">
+          <button class="secondary" id="hashAllBtn">Hash Current Input</button>
+          <button id="clearOutputBtn">Clear Output</button>
+        </div>
+        <div class="output" id="output"></div>
+      </section>
+
+      <div class="grid">
+        <section class="card">
+          <h2>Text</h2>
+          <p class="hint">Type or paste content to hash.</p>
+          <textarea id="textInput" placeholder="Enter text..."></textarea>
+          <div class="actions">
+            <button class="primary" id="hashTextBtn">Hash Text</button>
+            <button id="clearTextBtn">Clear</button>
+          </div>
+        </section>
+        <section class="card">
+          <h2>File</h2>
+          <p class="hint">Choose a local file to hash.</p>
+          <input type="file" id="fileInput" />
+          <div class="actions">
+            <button class="primary" id="hashFileBtn">Hash File</button>
+            <button id="clearFileBtn">Clear</button>
+          </div>
+          <div class="muted" id="fileMeta">No file selected.</div>
+        </section>
+      </div>
+    </main>
+    <footer style="padding: 0 24px 28px; color: var(--muted); font-size: 0.8rem; text-align: center;">
+      © wonshaw.github.io All rights reserved.
+    </footer>
+
+    <script>
+      const textInput = document.getElementById("textInput");
+      const fileInput = document.getElementById("fileInput");
+      const fileMeta = document.getElementById("fileMeta");
+      const output = document.getElementById("output");
+
+      const hashTextBtn = document.getElementById("hashTextBtn");
+      const clearTextBtn = document.getElementById("clearTextBtn");
+      const hashFileBtn = document.getElementById("hashFileBtn");
+      const clearFileBtn = document.getElementById("clearFileBtn");
+      const hashAllBtn = document.getElementById("hashAllBtn");
+      const clearOutputBtn = document.getElementById("clearOutputBtn");
+
+      function getSelectedAlgorithms() {
+        const checks = Array.from(document.querySelectorAll("#algoList input[type='checkbox']"));
+        return checks.filter((c) => c.checked).map((c) => c.value);
+      }
+
+      function bufferToHex(buffer) {
+        const bytes = new Uint8Array(buffer);
+        return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+      }
+
+      function addResultRow(algo, hex) {
+        const row = document.createElement("div");
+        row.className = "row";
+        row.innerHTML = `
+          <strong>${algo}</strong>
+          <code>${hex}</code>
+          <button data-copy="${hex}">Copy</button>
+        `;
+        output.appendChild(row);
+      }
+
+      output.addEventListener("click", (event) => {
+        const btn = event.target.closest("button[data-copy]");
+        if (!btn) return;
+        const value = btn.getAttribute("data-copy");
+        navigator.clipboard.writeText(value).catch(() => {});
+      });
+
+      function clearOutput() {
+        output.innerHTML = "";
+      }
+
+      function updateFileMeta(file) {
+        if (!file) {
+          fileMeta.textContent = "No file selected.";
+          return;
+        }
+        const size = file.size.toLocaleString();
+        fileMeta.textContent = `${file.name} · ${size} bytes`;
+      }
+
+      async function hashWithWebCrypto(algo, data) {
+        const digest = await crypto.subtle.digest(algo, data);
+        return bufferToHex(digest);
+      }
+
+      function md5(bytes) {
+        const rotateLeft = (x, c) => (x << c) | (x >>> (32 - c));
+        const add = (x, y) => (x + y) >>> 0;
+        const toWords = (u8) => {
+          const words = [];
+          for (let i = 0; i < u8.length; i += 4) {
+            words.push(
+              (u8[i] | (u8[i + 1] << 8) | (u8[i + 2] << 16) | (u8[i + 3] << 24)) >>> 0
+            );
+          }
+          return words;
+        };
+        const toHex = (num) => {
+          let out = "";
+          for (let i = 0; i < 4; i += 1) {
+            out += ((num >>> (i * 8)) & 0xff).toString(16).padStart(2, "0");
+          }
+          return out;
+        };
+
+        const originalLength = bytes.length;
+        const withPadding = new Uint8Array(((originalLength + 9 + 63) >> 6) << 6);
+        withPadding.set(bytes);
+        withPadding[originalLength] = 0x80;
+        const bitLen = originalLength * 8;
+        const view = new DataView(withPadding.buffer);
+        view.setUint32(withPadding.length - 8, bitLen >>> 0, true);
+        view.setUint32(withPadding.length - 4, Math.floor(bitLen / 0x100000000), true);
+
+        let a0 = 0x67452301;
+        let b0 = 0xefcdab89;
+        let c0 = 0x98badcfe;
+        let d0 = 0x10325476;
+
+        const k = [];
+        for (let i = 0; i < 64; i += 1) {
+          k[i] = Math.floor(Math.abs(Math.sin(i + 1)) * 0x100000000) >>> 0;
+        }
+        const s = [
+          7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22, 7, 12, 17, 22,
+          5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20, 5, 9, 14, 20,
+          4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23,
+          6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21
+        ];
+
+        for (let i = 0; i < withPadding.length; i += 64) {
+          const chunk = new Uint8Array(withPadding.buffer, i, 64);
+          const m = toWords(chunk);
+          let a = a0;
+          let b = b0;
+          let c = c0;
+          let d = d0;
+
+          for (let j = 0; j < 64; j += 1) {
+            let f;
+            let g;
+            if (j < 16) {
+              f = (b & c) | (~b & d);
+              g = j;
+            } else if (j < 32) {
+              f = (d & b) | (~d & c);
+              g = (5 * j + 1) % 16;
+            } else if (j < 48) {
+              f = b ^ c ^ d;
+              g = (3 * j + 5) % 16;
+            } else {
+              f = c ^ (b | ~d);
+              g = (7 * j) % 16;
+            }
+            const temp = d;
+            d = c;
+            c = b;
+            const sum = add(add(add(a, f), add(k[j], m[g])), 0);
+            b = add(b, rotateLeft(sum, s[j]));
+            a = temp;
+          }
+
+          a0 = add(a0, a);
+          b0 = add(b0, b);
+          c0 = add(c0, c);
+          d0 = add(d0, d);
+        }
+
+        return toHex(a0) + toHex(b0) + toHex(c0) + toHex(d0);
+      }
+
+      async function computeHashes(data) {
+        const algos = getSelectedAlgorithms();
+        if (!algos.length) {
+          output.innerHTML = "<div class='muted'>Select at least one algorithm.</div>";
+          return;
+        }
+        clearOutput();
+
+        for (const algo of algos) {
+          if (algo === "MD5") {
+            const hex = md5(new Uint8Array(data));
+            addResultRow("MD5", hex);
+          } else {
+            try {
+              const hex = await hashWithWebCrypto(algo, data);
+              addResultRow(algo, hex);
+            } catch (err) {
+              addResultRow(algo, "Not supported in this browser.");
+            }
+          }
+        }
+      }
+
+      hashTextBtn.addEventListener("click", () => {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(textInput.value);
+        computeHashes(data.buffer);
+      });
+
+      hashFileBtn.addEventListener("click", async () => {
+        const file = fileInput.files[0];
+        if (!file) {
+          output.innerHTML = "<div class='muted'>Select a file first.</div>";
+          return;
+        }
+        const buffer = await file.arrayBuffer();
+        computeHashes(buffer);
+      });
+
+      hashAllBtn.addEventListener("click", () => {
+        const file = fileInput.files[0];
+        const textValue = textInput.value;
+        if (file) {
+          hashFileBtn.click();
+          return;
+        }
+        if (textValue.length) {
+          hashTextBtn.click();
+          return;
+        }
+        output.innerHTML = "<div class='muted'>Enter text or select a file.</div>";
+      });
+
+      clearTextBtn.addEventListener("click", () => {
+        textInput.value = "";
+      });
+
+      clearFileBtn.addEventListener("click", () => {
+        fileInput.value = "";
+        updateFileMeta();
+      });
+
+      clearOutputBtn.addEventListener("click", clearOutput);
+
+      fileInput.addEventListener("change", () => {
+        updateFileMeta(fileInput.files[0]);
+      });
+    </script>
+  </body>
+</html>
