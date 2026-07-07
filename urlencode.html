@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>URL Encoder</title>
+    <style>
+      :root {
+        --bg: #191716;
+        --card: #26221f;
+        --card-2: #2d2723;
+        --ink: #f4efe8;
+        --muted: #b5aca1;
+        --accent: #6dc3b3;
+        --accent-2: #f2a56f;
+        --border: rgba(255, 255, 255, 0.08);
+        --shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--ink);
+        font-family: "Alegreya Sans", "Segoe UI", sans-serif;
+        min-height: 100vh;
+      }
+
+      header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 20px 24px 10px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      header h1 {
+        margin: 0 0 6px;
+        font-family: "Playfair Display", "Times New Roman", serif;
+        font-size: 1.5rem;
+      }
+
+      .title-block {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .notice {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 4px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: var(--card-2);
+        border: 1px solid rgba(109, 195, 179, 0.2);
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 4px rgba(109, 195, 179, 0.12);
+      }
+
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px 24px 36px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 16px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        box-shadow: var(--shadow);
+        padding: 16px;
+        display: grid;
+        gap: 12px;
+        align-content: start;
+      }
+
+      .card h2 {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+
+      .hint {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 220px;
+        resize: vertical;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--card-2);
+        color: var(--ink);
+        padding: 12px;
+        font-family: var(--mono);
+        font-size: 0.9rem;
+        outline: none;
+      }
+
+      textarea:focus {
+        border-color: rgba(109, 195, 179, 0.45);
+        box-shadow: 0 0 0 3px rgba(109, 195, 179, 0.12);
+      }
+
+      .mode {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: var(--card-2);
+        border: 1px solid var(--border);
+        color: var(--muted);
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      button {
+        cursor: pointer;
+        border: 1px solid var(--border);
+        background: var(--card-2);
+        color: var(--ink);
+        border-radius: 10px;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+      }
+
+      button.primary {
+        background: rgba(109, 195, 179, 0.14);
+        border-color: rgba(109, 195, 179, 0.35);
+      }
+
+      button.secondary {
+        background: rgba(242, 165, 111, 0.14);
+        border-color: rgba(242, 165, 111, 0.35);
+      }
+
+      .muted {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .error {
+        color: var(--accent-2);
+        font-size: 0.85rem;
+      }
+
+      @media (max-width: 720px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="title-block">
+        <h1>URL Encoder</h1>
+      </div>
+      <div class="notice"><span class="dot"></span>Offline-only: no server requests.</div>
+    </header>
+    <main>
+      <section class="card" style="margin-bottom: 16px;">
+        <h2>Mode</h2>
+        <div class="mode" id="modeList">
+          <label class="chip">
+            <input type="radio" name="mode" value="component" checked />
+            encodeURIComponent
+          </label>
+          <label class="chip">
+            <input type="radio" name="mode" value="uri" />
+            encodeURI
+          </label>
+        </div>
+        <p class="hint">
+          Use <strong>encodeURIComponent</strong> for query values and path segments; it escapes
+          reserved characters like <code>? &amp; = / #</code>. Use <strong>encodeURI</strong> for a
+          full URL, which keeps those separators intact.
+        </p>
+      </section>
+
+      <div class="grid">
+        <section class="card">
+          <h2>Plain Text</h2>
+          <p class="hint">Type or paste text, then encode it.</p>
+          <textarea id="plainInput" placeholder="e.g. https://example.com/?q=你好 世界"></textarea>
+          <div class="actions">
+            <button class="primary" id="encodeBtn">Encode →</button>
+            <button id="copyPlainBtn">Copy</button>
+            <button id="clearPlainBtn">Clear</button>
+          </div>
+          <div class="muted" id="plainMeta"></div>
+        </section>
+        <section class="card">
+          <h2>Encoded Text</h2>
+          <p class="hint">Type or paste an encoded string, then decode it.</p>
+          <textarea id="encodedInput" placeholder="e.g. https%3A%2F%2Fexample.com%2F%3Fq%3D%E4%BD%A0%E5%A5%BD%20%E4%B8%96%E7%95%8C"></textarea>
+          <div class="actions">
+            <button class="secondary" id="decodeBtn">← Decode</button>
+            <button id="copyEncodedBtn">Copy</button>
+            <button id="clearEncodedBtn">Clear</button>
+          </div>
+          <div class="error" id="decodeError"></div>
+        </section>
+      </div>
+    </main>
+    <footer style="padding: 0 24px 28px; color: var(--muted); font-size: 0.8rem; text-align: center;">
+      © wonshaw.github.io All rights reserved.
+    </footer>
+
+    <script>
+      const plainInput = document.getElementById("plainInput");
+      const encodedInput = document.getElementById("encodedInput");
+      const plainMeta = document.getElementById("plainMeta");
+      const decodeError = document.getElementById("decodeError");
+
+      const encodeBtn = document.getElementById("encodeBtn");
+      const decodeBtn = document.getElementById("decodeBtn");
+      const copyPlainBtn = document.getElementById("copyPlainBtn");
+      const copyEncodedBtn = document.getElementById("copyEncodedBtn");
+      const clearPlainBtn = document.getElementById("clearPlainBtn");
+      const clearEncodedBtn = document.getElementById("clearEncodedBtn");
+
+      function getMode() {
+        return document.querySelector("#modeList input[name='mode']:checked").value;
+      }
+
+      encodeBtn.addEventListener("click", () => {
+        decodeError.textContent = "";
+        const value = plainInput.value;
+        encodedInput.value = getMode() === "uri" ? encodeURI(value) : encodeURIComponent(value);
+        plainMeta.textContent = value ? `${value.length} chars → ${encodedInput.value.length} chars` : "";
+      });
+
+      decodeBtn.addEventListener("click", () => {
+        decodeError.textContent = "";
+        const value = encodedInput.value;
+        try {
+          plainInput.value = getMode() === "uri" ? decodeURI(value) : decodeURIComponent(value);
+          plainMeta.textContent = value ? `${value.length} chars → ${plainInput.value.length} chars` : "";
+        } catch (err) {
+          decodeError.textContent = "Invalid encoding: the input contains a malformed % sequence.";
+        }
+      });
+
+      function copyValue(textarea) {
+        if (!textarea.value) return;
+        navigator.clipboard.writeText(textarea.value).catch(() => {});
+      }
+
+      copyPlainBtn.addEventListener("click", () => copyValue(plainInput));
+      copyEncodedBtn.addEventListener("click", () => copyValue(encodedInput));
+
+      clearPlainBtn.addEventListener("click", () => {
+        plainInput.value = "";
+        plainMeta.textContent = "";
+      });
+
+      clearEncodedBtn.addEventListener("click", () => {
+        encodedInput.value = "";
+        decodeError.textContent = "";
+      });
+    </script>
+  </body>
+</html>
