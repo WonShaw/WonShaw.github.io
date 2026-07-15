@@ -170,6 +170,18 @@
         border-color: rgba(242, 165, 111, 0.35);
       }
 
+      button.copied {
+        background: rgba(109, 195, 179, 0.2);
+        border-color: rgba(109, 195, 179, 0.55);
+        color: var(--accent);
+      }
+
+      button.copy-failed {
+        background: rgba(242, 165, 111, 0.2);
+        border-color: rgba(242, 165, 111, 0.55);
+        color: var(--accent-2);
+      }
+
       .muted {
         color: var(--muted);
         font-size: 0.85rem;
@@ -278,13 +290,27 @@
         }
       });
 
-      function copyValue(textarea) {
-        if (!textarea.value) return;
-        navigator.clipboard.writeText(textarea.value).catch(() => {});
+      function showCopyFeedback(button, ok) {
+        clearTimeout(button._feedbackTimer);
+        button.textContent = ok ? "Copied ✓" : "Copy failed";
+        button.classList.toggle("copied", ok);
+        button.classList.toggle("copy-failed", !ok);
+        button._feedbackTimer = setTimeout(() => {
+          button.textContent = "Copy";
+          button.classList.remove("copied", "copy-failed");
+        }, 1500);
       }
 
-      copyPlainBtn.addEventListener("click", () => copyValue(plainInput));
-      copyEncodedBtn.addEventListener("click", () => copyValue(encodedInput));
+      function copyValue(textarea, button) {
+        if (!textarea.value) return;
+        navigator.clipboard.writeText(textarea.value).then(
+          () => showCopyFeedback(button, true),
+          () => showCopyFeedback(button, false)
+        );
+      }
+
+      copyPlainBtn.addEventListener("click", () => copyValue(plainInput, copyPlainBtn));
+      copyEncodedBtn.addEventListener("click", () => copyValue(encodedInput, copyEncodedBtn));
 
       clearPlainBtn.addEventListener("click", () => {
         plainInput.value = "";
