@@ -23,7 +23,7 @@
       --shadow: 0 10px 28px rgba(0,0,0,.45);
       --radius: 16px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      --ui: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      --ui: ui-sans-serif, system-ui, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, "Segoe UI Emoji";
     }
 
     *{box-sizing:border-box}
@@ -289,15 +289,19 @@
       font-size: 12px;
     }
   </style>
+  <link rel="stylesheet" href="/white-theme.css" />
 </head>
 
-<body>
+<body class="tool-page diff-page">
+  <nav class="site-nav" aria-label="Site navigation">
+    <a class="site-brand" href="/">String Diff Highlighter</a>
+    <a class="nav-back" href="/">All Tools</a>
+  </nav>
   <div class="container">
     <header>
       <div class="title">
-        <h1>String Diff Highlighter</h1>
+        <h1 class="visually-hidden">String Diff Highlighter</h1>
       </div>
-      <div class="badge"><span class="dot"></span>Offline-only: no server requests.</div>
     </header>
 
     <section class="grid">
