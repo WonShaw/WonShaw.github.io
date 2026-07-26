@@ -1,0 +1,199 @@
+/* Standalone styles for the APILab privacy policy page.
+   Intentionally independent of the site-wide tool theme (../white-theme.css):
+   this page belongs to the APILab app, not to the tools index. */
+
+.pp {
+  --pp-bg: #f7f6f2;
+  --pp-text: #2f2c29;
+  --pp-body: #5c5650;
+  --pp-heading: #3d3935;
+  --pp-lead: #5f5952;
+  --pp-muted: #938c83;
+  --pp-border: #dedad3;
+  --pp-accent: #687965;
+  --pp-link: #5c705a;
+  --pp-sans: "Avenir Next", Avenir, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --pp-display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, Georgia, serif;
+  --pp-width: min(780px, calc(100% - 40px));
+
+  margin: 0;
+  padding: 0;
+  max-width: none;
+  color: var(--pp-text);
+  background: var(--pp-bg);
+  font-family: var(--pp-sans);
+  line-height: 1.68;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.pp * {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pp::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(104, 121, 101, 0.07), transparent 27rem),
+    radial-gradient(circle at 92% 20%, rgba(120, 104, 82, 0.04), transparent 25rem);
+}
+
+.pp ::selection {
+  color: #2f2c29;
+  background: rgba(104, 121, 101, 0.2);
+}
+
+/* Header */
+.pp-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  padding: 0 max(24px, calc((100vw - 1200px) / 2 + 24px));
+  background: rgba(247, 246, 242, 0.94);
+  border-bottom: 1px solid rgba(78, 70, 62, 0.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.pp-title {
+  max-width: min(72vw, 620px);
+  overflow: hidden;
+  color: var(--pp-text);
+  font-family: var(--pp-display);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.025em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-title::before {
+  width: 8px;
+  height: 8px;
+  margin-right: 10px;
+  display: inline-block;
+  content: "";
+  vertical-align: 2px;
+  background: var(--pp-accent);
+  border-radius: 50%;
+}
+
+/* Content */
+.pp-content {
+  width: var(--pp-width);
+  margin: 0 auto;
+  padding: 58px 0 78px;
+}
+
+.pp-content > p:first-of-type {
+  margin: 0 0 40px;
+  color: var(--pp-lead);
+  font-family: var(--pp-display);
+  font-size: 1.28rem;
+  line-height: 1.55;
+}
+
+.pp-content section {
+  padding: 30px 0;
+  border-top: 1px solid var(--pp-border);
+}
+
+.pp-content h2 {
+  margin: 0 0 18px;
+  padding: 0;
+  color: var(--pp-text);
+  border: 0;
+  font-family: var(--pp-display);
+  font-size: 1.55rem;
+  font-weight: 500;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+}
+
+.pp-content h3 {
+  margin: 26px 0 7px;
+  color: var(--pp-heading);
+  font-size: 1rem;
+}
+
+.pp-content p,
+.pp-content li {
+  color: var(--pp-body);
+}
+
+.pp-content p {
+  margin: 0.6em 0;
+}
+
+.pp-content ul {
+  padding-left: 1.2em;
+}
+
+.pp-content li {
+  margin-bottom: 0.6em;
+}
+
+.pp-content a {
+  color: var(--pp-link);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* Footer */
+.pp-footer {
+  width: var(--pp-width);
+  margin: 0 auto;
+  padding: 22px 0 34px;
+  color: var(--pp-muted);
+  border-top: 1px solid var(--pp-border);
+  font-size: 0.9em;
+}
+
+.pp-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  margin: -1px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+@media (max-width: 640px) {
+  .pp-nav {
+    min-height: 54px;
+    padding-inline: 16px;
+  }
+
+  .pp-title {
+    font-size: 16px;
+  }
+
+  .pp-title::before {
+    margin-right: 8px;
+  }
+
+  .pp-content {
+    padding-top: 42px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pp *,
+  .pp *::before,
+  .pp *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
