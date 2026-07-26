@@ -24,6 +24,7 @@
 }
 
 * {
+  box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -32,6 +33,7 @@ html {
 }
 
 body {
+  margin: 0;
   background: var(--bg);
   color: var(--text);
   font-family: var(--sans);
@@ -237,6 +239,7 @@ select:focus-visible {
   column-gap: 16px;
   row-gap: 3px;
   color: var(--text);
+  text-decoration: none;
   background: rgba(255, 253, 249, 0.9);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -312,6 +315,7 @@ select:focus-visible {
   font-family: var(--mono);
   font-size: 0.68rem;
   letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .page-home footer {
@@ -319,6 +323,7 @@ select:focus-visible {
   padding-top: 20px;
   color: #938c83;
   border-top: 1px solid rgba(78, 70, 62, 0.12);
+  font-size: 0.85rem;
 }
 
 /* Shared tool pages */
@@ -541,6 +546,13 @@ select:focus-visible {
   border-color: #ead6b7;
 }
 
+.tool-page mark {
+  padding: 0 2px;
+  color: var(--text);
+  background: rgba(155, 99, 44, 0.18);
+  border-radius: 4px;
+}
+
 .tool-page .k { color: #8f4a71; }
 .tool-page .s { color: #a34f3c; }
 .tool-page .n { color: #3f668c; }
@@ -555,6 +567,7 @@ select:focus-visible {
   --del-bg: rgba(182, 75, 69, 0.11);
   --del-bd: rgba(182, 75, 69, 0.25);
   --eq-bg: rgba(70, 62, 54, 0.035);
+  --eq-bd: rgba(70, 62, 54, 0.16);
 }
 
 .tool-page footer {
