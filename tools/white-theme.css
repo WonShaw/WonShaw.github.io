@@ -286,6 +286,14 @@ select:focus-visible {
   border-color: #e7d7b9;
 }
 
+.page-home a.card:nth-child(5)::before {
+  content: "▦";
+  color: #5b6b82;
+  background: #e9edf2;
+  border-color: #d3dae3;
+  font-size: 19px;
+}
+
 .page-home a.card:hover {
   transform: translateY(-2px);
   background: #fffefa;
